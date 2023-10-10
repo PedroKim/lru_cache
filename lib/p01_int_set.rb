@@ -47,12 +47,15 @@ class IntSet
   end
 
   def insert(num)
+    self[num] << num
   end
 
   def remove(num)
+    self[num].pop
   end
 
   def include?(num)
+    self[num].include?(num)
   end
 
   private
@@ -77,12 +80,26 @@ class ResizingIntSet
   end
 
   def insert(num)
+    resize! if @count == num_buckets
+    unless include?(num)
+      self[num] << num
+      @count += 1
+    end
   end
 
   def remove(num)
+    if include?(num)
+      self[num].pop
+      @count -=1
+    end
   end
 
   def include?(num)
+    self[num].include?(num)
+  end
+
+  def inspect
+    @store
   end
 
   private
@@ -92,9 +109,15 @@ class ResizingIntSet
   end
 
   def resize!
+    @count = 0
+    elements = @store.flatten
+    @store = Array.new(2 * num_buckets) { Array.new }
+    elements.each { |el| insert(el) }
   end
 
   def [](num)
     # optional but useful; return the bucket corresponding to `num`
+    idx = num % num_buckets
+    @store[idx]
   end
 end
