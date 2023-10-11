@@ -25,12 +25,14 @@ end
 
 class LinkedList
   include Enumerable
+  attr_reader :count
 
   def initialize
     @head = Node.new(nil, nil)
     @tail = Node.new(nil, nil)
     @head.next = @tail
     @tail.prev = @head
+    @count = 0
   end
 
   def [](i)
@@ -72,6 +74,8 @@ class LinkedList
     new_node.prev = prev_node
     new_node.next = @tail
     @tail.prev = new_node
+    @count += 1
+    new_node
   end
 
   def update(key, val)
@@ -81,6 +85,7 @@ class LinkedList
   end
 
   def remove(key)
+    @count -= 1
     self.each do |node|
       node.remove if node.key == key
     end
